@@ -6,6 +6,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 autoIncrement: true,
                 primaryKey: true,
+                allowNull: false,
             },
 
             externalId: {
@@ -58,7 +59,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         {
             tableName: "researchers",
-            timestamps: true,
+            timestamps: false,
         },
     );
 
