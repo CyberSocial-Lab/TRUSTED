@@ -98,16 +98,16 @@ module.exports = (sequelize, DataTypes) => {
             },
 
             /**
-             * Researcher who submitted the study request.
+             * dataPortal who submitted the study request.
              *
              * Relationship:
-             * Researcher 1 --- N StudyRequest
+             * dataPortal 1 --- N StudyRequest
              */
-            researcherId: {
+            dataPortalId: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 references: {
-                    model: "researchers",
+                    model: "dataPortals",
                     key: "id",
                 },
                 onUpdate: "CASCADE",
@@ -138,7 +138,7 @@ module.exports = (sequelize, DataTypes) => {
              * Algorithm used to produce the applicant's signature.
              *
              * This describes the signature operation, not merely the type
-             * of public key registered for the researcher.
+             * of public key registered for the dataPortal.
              *
              * Examples:
              * ES256
@@ -221,7 +221,7 @@ module.exports = (sequelize, DataTypes) => {
                     fields: ["studyId"],
                 },
                 {
-                    fields: ["researcherId"],
+                    fields: ["dataPortalId"],
                 },
                 {
                     fields: ["status"],
@@ -238,11 +238,11 @@ module.exports = (sequelize, DataTypes) => {
      */
     StudyRequest.associate = (models) => {
         /**
-         * The researcher who submitted the request.
+         * The dataPortal who submitted the request.
          */
-        StudyRequest.belongsTo(models.Researcher, {
-            foreignKey: "researcherId",
-            as: "researcher",
+        StudyRequest.belongsTo(models.dataPortal, {
+            foreignKey: "dataPortalId",
+            as: "dataPortal",
         });
 
         /*

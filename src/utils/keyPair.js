@@ -40,28 +40,25 @@ module.exports = {
     validatePrivateKey,
 };
 
-
-
-
 // preparing file keypair for seeders and for test purposes.
 
 var keyPair = generateKeyPair();
-fs.writeFileSync(
+fs.appendFileSync(
     "../test/fixtures/keys/hospital-private.pem",
     keyPair.privateKey,
 );
 keyPair = generateKeyPair();
-fs.writeFileSync(
+fs.appendFileSync(
     "../test/fixtures/keys/hospital-public.pem",
     keyPair.publicKey,
 );
 keyPair = generateKeyPair();
-fs.writeFileSync(
-    "../test/fixtures/keys/researcher-private.pem",
+fs.appendFileSync(
+    "../test/fixtures/keys/dataPortal-private.pem",
     keyPair.privateKey,
 );
 keyPair = generateKeyPair();
-fs.writeFileSync(
-    "../test/fixtures/keys/researcher-public.pem",
+fs.appendFileSync(
+    "../test/fixtures/keys/dataPortal-public.pem",
     keyPair.publicKey,
 );

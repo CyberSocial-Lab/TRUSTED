@@ -26,7 +26,10 @@ module.exports = {
                 unique: true,
                 type: Sequelize.STRING,
             },
-
+            webhookUrl: {
+                type: Sequelize.STRING,
+                allowNull: true,
+            },
             status: {
                 allowNull: false,
                 type: Sequelize.ENUM("ACTIVE", "INACTIVE"),

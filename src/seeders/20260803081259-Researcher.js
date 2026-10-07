@@ -12,7 +12,7 @@ module.exports = {
 
         const now = new Date();
         await queryInterface.bulkInsert(
-            "researchers",
+            "dataPortals",
             [
                 {
                     externalId: "Marco Bianchi",
@@ -21,7 +21,7 @@ module.exports = {
                     role: "Data Access Coordinator",
                     organisation: "European Institute for Health Research",
                     status: "ACTIVE",
-                    publicKeyId: pk[1].id,
+                    publicKeyId: pk[3].id,
                 },
             ],
             {},
@@ -29,6 +29,6 @@ module.exports = {
     },
 
     async down(queryInterface, Sequelize) {
-        await queryInterface.bulkDelete("researchers", null, {});
+        await queryInterface.bulkDelete("dataPortals", null, {});
     },
 };

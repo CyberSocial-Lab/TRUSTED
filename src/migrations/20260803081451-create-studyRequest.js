@@ -48,11 +48,11 @@ module.exports = {
                 defaultValue: "PENDING",
             },
 
-            researcherId: {
+            dataPortalId: {
                 type: Sequelize.INTEGER,
                 allowNull: false,
                 references: {
-                    model: "researchers",
+                    model: "dataPortals",
                     key: "id",
                 },
                 onUpdate: "CASCADE",
@@ -117,8 +117,8 @@ module.exports = {
             name: "study_requests_study_id_idx",
         });
 
-        await queryInterface.addIndex("study_requests", ["researcherId"], {
-            name: "study_requests_researcher_id_idx",
+        await queryInterface.addIndex("study_requests", ["dataPortalId"], {
+            name: "study_requests_dataPortal_id_idx",
         });
 
         await queryInterface.addIndex("study_requests", ["status"], {

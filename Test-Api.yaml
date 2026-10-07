@@ -1,0 +1,46 @@
+openapi: 3.0.0
+info:
+    title: Consent_Managment
+    version: 1.0.0
+    description: ""
+servers:
+    - url: http://localhost:3000
+    - url: ""
+paths:
+    /study-requests:
+        post:
+            summary: Decision-revoke
+            responses: {}
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                        example: "{\r\n  \"dataPortal_id\": 1,\r\n  \"request_payload\": {\r\n    \"request_id\": \"REQ-TEST-001\",\r\n\"form_type\": \"DATA_ACCESS_APPLICATION\",\r\n      \"study_id\": \"STUDY-TEST-001\",\r\n      \"title\": \"Test study request\",\r\n      \"language\": \"en\",\r\n      \"expires_at\": \"2026-08-10T18:00:00.000Z\"\r\n    },\r\n    \"requested_data_owners\": [\r\n      {\r\n        \"owner_id\": \"123-ABC\",\r\n        \"country_code\": \"PT\",\r\n        \"dataset_id\": \"DATASET-001\"\r\n      }\r\n    ],\r\n    \"purpose_of_use\": {\r\n      \"purpose\": \"scientific_research\",\r\n      \"description\": \"Request created to test the consent management flow\"\r\n    },\r\n    \"acknowledgements\": {\r\n      \"terms_accepted\": true\r\n    }\r\n  },\r\n  \"applicant_signature\": {\r\n    \"public_key_id\": \"dataPortal-key-1\",\r\n    \"signature_algorithm\": \"RSA-SHA256\",\r\n    \"signed_payload_hash\": \"test-hash\",\r\n    \"signature_value\": \"test-signature\",\r\n    \"signed_at\": \"2026-08-04T18:30:00.000Z\"\r\n  }\r\n}"
+    /study-requests/1/decisions:
+        post:
+            summary: Decision-approval
+            responses: {}
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                owner_id:
+                                    type: string
+                                decision:
+                                    type: string
+                                signature:
+                                    type: string
+                                justification:
+                                    type: string
+                        example:
+                            owner_id: 123-ABC
+                            decision: APPROVED
+                            signature: this-is-a-signature
+                            justification: ""
+    /:
+        get:
+            summary: New Request
+            responses: {}

@@ -13,7 +13,7 @@ async function testStudyFlow() {
             eventType: "STUDY_PUBLISHED",
             studyRequestId: 25,
             studyId: "STUDY-TEST-001",
-            researcherId: 7,
+            dataPortalId: 7,
             hospitalId,
             title: "Test study RabbitMQ",
             publishedAt: new Date().toISOString(),

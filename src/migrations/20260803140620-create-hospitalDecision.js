@@ -3,6 +3,22 @@
 /** @type {import("sequelize-cli").Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
+        await queryInterface.sequelize.query(`
+            DO $$
+            BEGIN
+                CREATE TYPE "enum_hospital_decisions_status"
+                AS ENUM (
+                    'PENDING',
+                    'GRANTED',
+                    'DENIED',
+                    'REVOKED'
+                );
+            EXCEPTION
+                WHEN duplicate_object THEN NULL;
+            END
+            $$;
+        `);
+
         await queryInterface.createTable("hospital_decisions", {
             id: {
                 type: Sequelize.INTEGER,
@@ -34,12 +50,7 @@ module.exports = {
             },
 
             status: {
-                type: Sequelize.ENUM(
-                    "PENDING",
-                    "APPROVED",
-                    "REJECTED",
-                    "EXPIRED",
-                ),
+                type: Sequelize.ENUM("PENDING", "GRANTED", "DENIED", "REVOKED"),
                 allowNull: false,
                 defaultValue: "PENDING",
             },
@@ -69,6 +80,11 @@ module.exports = {
                 allowNull: true,
             },
 
+            revokedAt: {
+                type: Sequelize.DATE,
+                allowNull: true,
+            },
+
             createdAt: {
                 type: Sequelize.DATE,
                 allowNull: false,
@@ -82,10 +98,6 @@ module.exports = {
             },
         });
 
-        /*
-         * Prevents the same hospital from receiving two decision records
-         * for the same StudyRequest.
-         */
         await queryInterface.addConstraint("hospital_decisions", {
             fields: ["studyRequestId", "hospitalId"],
             type: "unique",
@@ -112,12 +124,8 @@ module.exports = {
     async down(queryInterface) {
         await queryInterface.dropTable("hospital_decisions");
 
-        /*
-         * PostgreSQL keeps ENUM types after dropping the table,
-         * therefore we remove the generated type explicitly.
-         */
-        await queryInterface.sequelize.query(
-            'DROP TYPE IF EXISTS "enum_hospital_decisions_status";',
-        );
+        await queryInterface.sequelize.query(`
+            DROP TYPE IF EXISTS "enum_hospital_decisions_status";
+        `);
     },
 };

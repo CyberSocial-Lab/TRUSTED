@@ -1,15 +1,15 @@
 const { connectRabbitMQ } = require("./rabbitmq.connection");
 
 const {
-    getResearcherQueueName,
-    initializeResearcherQueue,
+    getdataPortalQueueName,
+    initializedataPortalQueue,
 } = require("./queques");
 
-async function startResearcherConsumer(ResearcherId) {
-    await initializeResearcherQueue(ResearcherId);
+async function startdataPortalConsumer(dataPortalId) {
+    await initializedataPortalQueue(dataPortalId);
 
     const channel = await connectRabbitMQ();
-    const queueName = getResearcherQueueName(ResearcherId);
+    const queueName = getdataPortalQueueName(dataPortalId);
 
     await channel.consume(
         queueName,
@@ -22,14 +22,14 @@ async function startResearcherConsumer(ResearcherId) {
                 const content = JSON.parse(msg.content.toString());
 
                 console.log(
-                    `[Researcher ${ResearcherId}] Message received:`,
+                    `[dataPortal ${dataPortalId}] Message received:`,
                     content,
                 );
 
                 channel.ack(msg);
             } catch (error) {
                 console.error(
-                    `[Researcher ${ResearcherId}] Consumer error:`,
+                    `[dataPortal ${dataPortalId}] Consumer error:`,
                     error.message,
                 );
 
@@ -45,5 +45,5 @@ async function startResearcherConsumer(ResearcherId) {
 }
 
 module.exports = {
-    startResearcherConsumer,
+    startdataPortalConsumer,
 };

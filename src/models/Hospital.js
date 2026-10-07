@@ -16,10 +16,10 @@ module.exports = (sequelize, DataTypes) => {
             //     as: "reviewers",
             // });
 
-            // Hospital.hasMany(models.HospitalDecision, {
-            //     foreignKey: "hospitalId",
-            //     as: "decisions",
-            // });
+            Hospital.hasMany(models.HospitalDecision, {
+                foreignKey: "hospitalId",
+                as: "decisions",
+            });
         }
     }
 
@@ -41,6 +41,13 @@ module.exports = (sequelize, DataTypes) => {
                 unique: true,
             },
 
+            webhookUrl: {
+                type: DataTypes.STRING,
+                allowNull: true,
+                validate: {
+                    isUrl: true,
+                },
+            },
             status: {
                 type: DataTypes.ENUM("ACTIVE", "INACTIVE"),
                 allowNull: false,
@@ -63,7 +70,7 @@ module.exports = (sequelize, DataTypes) => {
             sequelize,
             modelName: "Hospital",
             tableName: "hospitals",
-            timestamps: false,
+            timestamps: true,
         },
     );
 

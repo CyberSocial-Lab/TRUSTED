@@ -4,7 +4,7 @@
 
 The Consent Management Service manages research requests involving one or more hospitals.
 
-A researcher submits a research request. Each involved hospital independently approves or rejects the request.
+A dataPortal submits a research request. Each involved hospital independently approves or rejects the request.
 
 The request:
 
@@ -17,7 +17,7 @@ For the initial demo, each hospital has one registered public key. Key rotation 
 
 ## Entities
 
-### Researcher
+### dataPortal
 
 Represents the person or organisation submitting a research request.
 
@@ -51,7 +51,7 @@ For the demo, the hospital directly stores its current public key and signature 
 
 ### ResearchRequest
 
-Represents a study or data-access request submitted by a researcher.
+Represents a study or data-access request submitted by a dataPortal.
 
 ### HospitalDecision
 
@@ -61,7 +61,7 @@ A hospital can submit only one decision for the same research request.
 
 ## Relationships
 
-- One Researcher can submit many ResearchRequests.
+- One dataPortal can submit many ResearchRequests.
 - One ResearchRequest can involve many Hospitals.
 - One Hospital can participate in many ResearchRequests.
 - HospitalDecision represents the relationship between ResearchRequest and Hospital.

@@ -10,24 +10,24 @@ function getHospitalQueueName(hospitalId) {
     return `hospital.${hospitalId}.notifications`;
 }
 
-function getResearcherQueueName(researcherId) {
-    return `researcher.${researcherId}.notifications`;
+function getdataPortalQueueName(dataPortalId) {
+    return `dataPortal.${dataPortalId}.notifications`;
 }
 
 function getStudyPublishedRoutingKey(hospitalId) {
     return `study.published.hospital.${hospitalId}`;
 }
 
-function getStudyDecisionRoutingKey(researcherId, decision) {
+function getStudyDecisionRoutingKey(dataPortalId, decision) {
     if (!decision) {
         throw new Error("decision is required");
     }
 
-    return `study.decision.${decision}.researcher.${researcherId}`;
+    return `study.decision.${decision}.dataPortal.${dataPortalId}`;
 }
 
-function getStudyDecisionBindingKey(researcherId) {
-    return `study.decision.*.researcher.${researcherId}`;
+function getStudyDecisionBindingKey(dataPortalId) {
+    return `study.decision.*.dataPortal.${dataPortalId}`;
 }
 
 async function initializeStudyExchange() {
@@ -64,15 +64,15 @@ async function initializeHospitalQueue(hospitalId) {
     return queueName;
 }
 
-async function initializeResearcherQueue(researcherId) {
-    if (researcherId === undefined || researcherId === null) {
-        throw new Error("researcherId is required");
+async function initializedataPortalQueue(dataPortalId) {
+    if (dataPortalId === undefined || dataPortalId === null) {
+        throw new Error("dataPortalId is required");
     }
 
     const channel = await initializeStudyExchange();
 
-    const queueName = getResearcherQueueName(researcherId);
-    const bindingKey = getStudyDecisionBindingKey(researcherId);
+    const queueName = getdataPortalQueueName(dataPortalId);
+    const bindingKey = getStudyDecisionBindingKey(dataPortalId);
 
     await channel.assertQueue(queueName, {
         durable: true,
@@ -91,11 +91,11 @@ async function initializeResearcherQueue(researcherId) {
 module.exports = {
     getExchangeName,
     getHospitalQueueName,
-    getResearcherQueueName,
+    getdataPortalQueueName,
     getStudyPublishedRoutingKey,
     getStudyDecisionRoutingKey,
     getStudyDecisionBindingKey,
     initializeStudyExchange,
     initializeHospitalQueue,
-    initializeResearcherQueue,
+    initializedataPortalQueue,
 };
