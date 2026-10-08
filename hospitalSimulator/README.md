@@ -93,7 +93,6 @@ docker compose up -d --build
 
 This starts:
 
-- The Consent Manager backend.
 - PostgreSQL.
 - RabbitMQ.
 
@@ -103,25 +102,9 @@ The Consent Manager is accessible from Postman at:
 http://localhost:3000
 ```
 
-**Do not run `npm start` for the Consent Manager in this mode.** Stop any existing local instance before starting the Docker backend.
 
 Inside Docker, the backend connects to PostgreSQL at `postgres:5432` and RabbitMQ at `rabbitmq:5672`. Broker credentials configured in the backend must match those configured for RabbitMQ.
 
-### Option B — Consent Manager backend locally, dependencies in Docker
-
-Use this mode when you want to start the Consent Manager with `npm start`, for example while developing or debugging.
-
-If the Docker backend is running, stop it:
-
-```bash
-docker compose stop backend
-```
-
-Start only PostgreSQL and RabbitMQ:
-
-```bash
-docker compose up -d postgres rabbitmq
-```
 
 In a separate terminal, open the Consent Manager backend directory. Install dependencies on the first run:
 
@@ -200,71 +183,6 @@ Webhook URLs are stored in the Consent Manager database, in the `webhookUrl` col
 
 Select the addresses that match your execution mode:
 
-| Hospital | Option A: Consent Manager in Docker, simulator on PC | Option B: both backends on PC |
-|---|---|---|
-| 1 | `http://host.docker.internal:4001/hospitals/1/webhooks/study-requests` | `http://localhost:4001/hospitals/1/webhooks/study-requests` |
-| 2 | `http://host.docker.internal:4001/hospitals/2/webhooks/study-requests` | `http://localhost:4001/hospitals/2/webhooks/study-requests` |
-| 3 | `http://host.docker.internal:4001/hospitals/3/webhooks/study-requests` | `http://localhost:4001/hospitals/3/webhooks/study-requests` |
-
-Within a container, `localhost` refers to that container. In Docker Desktop, `host.docker.internal` resolves to the host PC.
-
-These instructions assume Docker Desktop for Option A. Other Docker environments may require explicit host-name mapping.
-
-### Inspect the stored URLs
-
-Open a shell in the PostgreSQL container:
-
-```bash
-docker exec -it TRUSTED-DB sh
-```
-
-Then connect to the database:
-
-```sh
-psql -U "$POSTGRES_USER" -d "$POSTGRES_DB"
-```
-
-Inspect the hospital records:
-
-```sql
-SELECT id, "organizationId", "webhookUrl"
-FROM hospitals
-ORDER BY id;
-```
-
-### Switch existing local URLs to Option A
-
-```sql
-UPDATE hospitals
-SET "webhookUrl" = REPLACE(
-    "webhookUrl",
-    'http://localhost:4001/',
-    'http://host.docker.internal:4001/'
-),
-"updatedAt" = NOW()
-WHERE "webhookUrl" LIKE 'http://localhost:4001/hospitals/%'
-RETURNING id, "webhookUrl";
-```
-
-### Switch existing Docker-to-host URLs to Option B
-
-```sql
-UPDATE hospitals
-SET "webhookUrl" = REPLACE(
-    "webhookUrl",
-    'http://host.docker.internal:4001/',
-    'http://localhost:4001/'
-),
-"updatedAt" = NOW()
-WHERE "webhookUrl" LIKE 'http://host.docker.internal:4001/hospitals/%'
-RETURNING id, "webhookUrl";
-```
-
-Run only the update that matches the selected mode. These queries update matching existing URLs; they do not create missing hospital records or fill empty URLs.
-
-Exit PostgreSQL with `\q`, then exit the container shell with `exit`.
-
-For future database initialization, keep the hospital seeder URLs consistent with the chosen mode. Editing a seeder does not update records already stored in the database.
 
 ## 4. Start the Hospital Simulator frontend
 
@@ -449,50 +367,3 @@ The two applications store data differently:
 - **Hospital Simulator:** uses in-memory collections. Restarting its backend clears the received requests and local decision state.
 
 After restarting the simulator, submit a new test request to populate it again. Previously received requests are not automatically restored from PostgreSQL by the supplied simulator code.
-
-## Troubleshooting
-
-| Symptom | What to check |
-|---|---|
-| Port 3000 is already in use | Run only one Consent Manager backend: Docker or local Node. |
-| `researcherId is required` | Send `researcher_id` in the JSON body. The controller maps it to the internal variable `researcherId`. |
-| Model or table errors involving `dataPortal` | Check that the restored implementation consistently uses `Researcher`, `researchers` and `researcherId`. |
-| Webhook returns `fetch failed` | Check that the simulator backend is running and that stored webhook URLs match the execution mode. |
-| Only one hospital receives the request | Inspect each entry in `webhookNotifications.errors` and verify all recipient URLs. |
-| Health check works, but Docker cannot deliver a webhook | A host-browser check does not verify container-to-host connectivity. Check host-name resolution, server reachability and firewall rules. |
-| Simulator API returns `[]` | Verify the recipient hospital, webhook delivery and whether the simulator was restarted. |
-| API contains requests, frontend is empty | Check the selected hospital and the frontend's API URL or proxy configuration. |
-| Duplicate request error | Use a new `request_payload.request_id`. |
-| Expiration error | Set `expires_at` to a future time. |
-| Docker still runs old code | Rebuild the backend image after source changes. |
-
-## Useful commands
-
-Inspect Docker services:
-
-```bash
-docker compose ps
-```
-
-Follow the Docker backend logs:
-
-```bash
-docker compose logs -f backend
-```
-
-Rebuild and restart the Docker backend after code changes, when using Option A:
-
-```bash
-docker compose up -d --build backend
-```
-
-Stop Docker services without removing their containers:
-
-```bash
-docker compose stop
-```
-
-Stop each locally running backend or frontend with `Ctrl+C` in its terminal.
-
-Avoid `docker compose down -v` unless you intentionally want to remove the project's Docker volumes and their stored data.
-
