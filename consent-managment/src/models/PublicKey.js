@@ -26,9 +26,9 @@ module.exports = (sequelize, DataTypes) => {
     );
 
     PublicKey.associate = (models) => {
-        PublicKey.hasOne(models.dataPortal, {
+        PublicKey.hasOne(models.Researcher, {
             foreignKey: "publicKeyId",
-            as: "dataPortal",
+            as: "researcher",
         });
         PublicKey.hasOne(models.Hospital, {
             foreignKey: "publicKeyId",

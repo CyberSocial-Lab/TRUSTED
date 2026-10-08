@@ -1,6 +1,8 @@
+"use strict";
+
 module.exports = (sequelize, DataTypes) => {
-    const dataPortal = sequelize.define(
-        "dataPortal",
+    const Researcher = sequelize.define(
+        "Researcher",
         {
             id: {
                 type: DataTypes.INTEGER,
@@ -58,25 +60,24 @@ module.exports = (sequelize, DataTypes) => {
             },
         },
         {
-            tableName: "dataPortals",
+            tableName: "researchers",
             timestamps: false,
         },
     );
 
-    dataPortal.associate = (models) => {
-        dataPortal.belongsTo(models.PublicKey, {
+    Researcher.associate = (models) => {
+        Researcher.belongsTo(models.PublicKey, {
             foreignKey: "publicKeyId",
             as: "publicKey",
         });
 
-        // Da aggiungere quando creeremo il modello StudyRequest.
         if (models.StudyRequest) {
-            dataPortal.hasMany(models.StudyRequest, {
-                foreignKey: "dataPortalId",
+            Researcher.hasMany(models.StudyRequest, {
+                foreignKey: "researcherId",
                 as: "studyRequests",
             });
         }
     };
 
-    return dataPortal;
+    return Researcher;
 };

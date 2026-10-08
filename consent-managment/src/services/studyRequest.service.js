@@ -7,7 +7,7 @@ const {
     StudyRequest,
     Hospital,
     HospitalDecision,
-    dataPortal,
+    Researcher,
 } = require("../models");
 
 const { submitStudy } = require("../messagging/study.publisher");
@@ -15,12 +15,12 @@ const { submitStudy } = require("../messagging/study.publisher");
 const { sendStudyRequestCreatedWebhook } = require("./webhook.service");
 
 async function publishStudyRequest({
-    dataPortalId,
+    researcherId,
     requestPayload,
     applicantSignature,
 }) {
-    if (!dataPortalId) {
-        throw new Error("dataPortalId is required");
+    if (!researcherId) {
+        throw new Error("researcherId is required");
     }
 
     if (!requestPayload) {
@@ -44,12 +44,11 @@ async function publishStudyRequest({
         throw new Error("Every requested data owner must contain owner_id");
     }
 
-    const dataPortal = await dataPortal.findByPk(dataPortalId);
+    const researcher = await Researcher.findByPk(researcherId);
 
-    if (!dataPortal || dataPortal.status !== "ACTIVE") {
-        throw new Error("dataPortal not found or inactive");
+    if (!researcher || researcher.status !== "ACTIVE") {
+        throw new Error("Researcher not found or inactive");
     }
-
     const hospitals = await Hospital.findAll({
         where: {
             organizationId: {
@@ -99,7 +98,7 @@ async function publishStudyRequest({
 
                 status: "PENDING",
 
-                dataPortalId,
+                researcherId,
 
                 requestPayload,
 
@@ -156,7 +155,7 @@ async function publishStudyRequest({
 
                 studyId: studyRequest.studyId,
 
-                dataPortalId,
+                researcherId,
 
                 hospitalId: hospital.id,
 

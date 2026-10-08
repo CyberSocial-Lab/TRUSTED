@@ -5,13 +5,13 @@ const { publishStudyRequest } = require("../services/studyRequest.service");
 async function createStudyRequest(ctx) {
     try {
         const {
-            dataPortal_id: dataPortalId,
+            researcher_id: researcherId,
             request_payload: requestPayload,
             applicant_signature: applicantSignature,
         } = ctx.request.body;
 
         const result = await publishStudyRequest({
-            dataPortalId,
+            researcherId,
             requestPayload,
             applicantSignature,
         });
@@ -19,11 +19,8 @@ async function createStudyRequest(ctx) {
         ctx.status = 201;
         ctx.body = {
             message: "Study request created successfully",
-
             studyRequest: result.studyRequest,
-
             rabbitMqNotifications: result.rabbitMqNotifications,
-
             webhookNotifications: result.webhookNotifications,
         };
     } catch (error) {

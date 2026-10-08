@@ -103,11 +103,11 @@ module.exports = (sequelize, DataTypes) => {
              * Relationship:
              * dataPortal 1 --- N StudyRequest
              */
-            dataPortalId: {
+            researcherId: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 references: {
-                    model: "dataPortals",
+                    model: "researchers",
                     key: "id",
                 },
                 onUpdate: "CASCADE",
@@ -221,7 +221,7 @@ module.exports = (sequelize, DataTypes) => {
                     fields: ["studyId"],
                 },
                 {
-                    fields: ["dataPortalId"],
+                    fields: ["researcherId"],
                 },
                 {
                     fields: ["status"],
@@ -240,9 +240,9 @@ module.exports = (sequelize, DataTypes) => {
         /**
          * The dataPortal who submitted the request.
          */
-        StudyRequest.belongsTo(models.dataPortal, {
-            foreignKey: "dataPortalId",
-            as: "dataPortal",
+        StudyRequest.belongsTo(models.Researcher, {
+            foreignKey: "researcherId",
+            as: "researcher",
         });
 
         /*

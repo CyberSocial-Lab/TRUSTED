@@ -1,23 +1,26 @@
 
 services:
-  backend:
-    build: ./src
-    container_name: TRUSTED-backend
-    restart: unless-stopped
-    depends_on:
-      postgres:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-    environment:   
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-      DB_HOST: postgres
-      POSTGRES_PORT: 5432
-      RABBITMQ_URL: amqp://trusted:trusted_password@rabbitmq:5672
-    ports:
-    - "3000:3000"
+  # To use this specific backend on docker file you need to change all the hospital webhook into host.docker instad of localhost
+  
+  
+  # backend:
+  #   build: ./src
+  #   container_name: TRUSTED-backend
+  #   restart: unless-stopped
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #     rabbitmq:
+  #       condition: service_healthy
+  #   environment:   
+  #     POSTGRES_USER: ${POSTGRES_USER}
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  #     POSTGRES_DB: ${POSTGRES_DB}
+  #     DB_HOST: postgres
+  #     POSTGRES_PORT: 5432
+  #     RABBITMQ_URL: amqp://trusted:trusted_password@rabbitmq:5672
+  #   ports:
+  #   - "3000:3000"
 
   rabbitmq:
     image: rabbitmq:4-management
